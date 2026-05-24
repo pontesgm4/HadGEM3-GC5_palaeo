@@ -140,5 +140,5 @@ sbatch submit_domaincfg.sh
 Check:
 
    ```text
-squeue -u <archer2-usernanema
+squeue -u <archer2-username
    ```
