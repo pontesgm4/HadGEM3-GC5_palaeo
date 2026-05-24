@@ -14,57 +14,18 @@ The interpolated field is used as the starting point for:
 
 ## Target grid
 
-For NEMO, bathymetry is defined on **T points** (tracer-cell centres), therefore the interpolation target grid uses:
+Ideally we want to use conservative remapping, but I couldn't do that because the NEMO `domain_cfg.nc` file does not contain the grid corners (see below). As such, I used the interpolation from PRISM to NEMO grid done by Charlie.
 
-- `glamt` → longitude of T points
-- `gphit` → latitude of T points
+The `domain_cfg.nc` can be found on Archer2, after running any suite, on 
 
-from:
+`[Archer2] ~/cylc-run/<suite-id>/runX/share/data/etc/ancil_nemo/`
 
-```bash
-domain_cfg.nc
-```
 
-Example:
-
-```python
-oc_grid = xr.Dataset(
-    {
-        "lon": (("y", "x"), ds["glamt"].isel(t=0).values),
-        "lat": (("y", "x"), ds["gphit"].isel(t=0).values),
-    }
-)
-```
-
----
-
-## Interpolation method
-
-Bathymetry is interpolated with **xESMF**.
-
-Recommended methods:
-
-- `nearest_s2d` → preserves coastlines and land–sea mask geometry
-- `bilinear` → smoother depth field
-
-Example:
-
-```python
-regridder = xe.Regridder(
-    grid_prism,
-    oc_grid,
-    method="nearest_s2d",
-    periodic=True,
-)
-```
-
----
-
-## Why conservative remapping was not used
+### Why conservative remapping was not used
 
 Conservative remapping was initially tested (following previous workflows with MOM/ACCESS-ESM1.5), but is not used here for the NEMO ORCA grid.
 
-### 1. ORCA corner geometry is not explicit
+#### 1. ORCA corner geometry is not explicit
 
 `xesmf` conservative remapping requires cell corners:
 
@@ -81,9 +42,7 @@ NEMO `domain_cfg.nc` provides:
 
 but does **not** provide an explicit `(ny+1,nx+1)` corner grid directly usable by ESMF.
 
----
-
-### 2. ORCA tripolar geometry is difficult for ESMF
+#### 2. ORCA tripolar geometry is difficult for ESMF
 
 The ORCA grid includes:
 - Arctic fold / tripolar geometry
@@ -94,26 +53,6 @@ These can cause ESMF conservative remapping to fail (e.g. `ESMC_FieldRegridStore
 
 ---
 
-### 3. Conservative remapping is not ideal for bathymetry
-
-Bathymetry is geometric/topographic information rather than a conserved extensive quantity.
-
-Conservative remapping can:
-- smooth narrow gateways,
-- broaden coastlines,
-- generate shallow shelf artefacts,
-- alter basin connectivity.
-
-For paleo experiments this is especially important in:
-- Central American Seaway / Panama
-- Indonesian Throughflow
-- Arctic gateways
-- Southern Ocean passages
-
-where small bathymetric changes can strongly affect circulation.
-
----
-
 ## Post-processing
 
 After interpolation:
@@ -121,11 +60,6 @@ After interpolation:
 1. convert negative elevations to land (`depth <= 0 → land`)
 2. inspect regional gateways manually
 3. remove isolated inland seas if needed
-4. smooth unstable bathymetry locally
-5. regenerate:
-   - `bottom_level`
-   - land–sea masks
-   - partial cell geometry
 
 ---
 
