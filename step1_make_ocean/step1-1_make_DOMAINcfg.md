@@ -97,7 +97,7 @@ Thisscripts cretes the `DOMAINcfg` directory under `./tools/`.
    cp cp /work/n02/n02/an25872/NEMO_SRC/utils/tools/DOMAINcfg/eORCA1_coordinates_nc4.nc_from_MR.nc .
   ```
 
-    Update the Bathymetry input file in namelist_cfg with your onw final interpolated bathymetry file from Jasmin (use Globus to transfer the file from Jasmin to this directory). Update the name of the Bathymetry variable in the script if needed.
+Update the Bathymetry input file in namelist_cfg with your onw final interpolated bathymetry file from Jasmin (use Globus to transfer the file from Jasmin to this directory). Update the name of the Bathymetry variable in the script if needed.
     
 11. 
 
