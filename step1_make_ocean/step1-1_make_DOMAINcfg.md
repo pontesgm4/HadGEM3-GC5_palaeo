@@ -99,10 +99,46 @@ Thisscripts cretes the `DOMAINcfg` directory under `./tools/`.
 
 Update the Bathymetry input file in namelist_cfg with your onw final interpolated bathymetry file from Jasmin (use Globus to transfer the file from Jasmin to this directory). Update the name of the Bathymetry variable in the script if needed.
     
-11. 
+11. Create a `sub` script as below, so that we can run `maske_domain_cfg.exe` and generate the `domain_cfg.nc` and `mesh_mask.nc` file for the new configuration:
 
    ```text
+   vim submit_domaincfg.sh
+   ```
 
+Copy and paste the script below. Remember to change `chdir` to your won `DOMAINcfg` directory.
+
+   ```text
+#!/bin/bash -l
+#
+#SBATCH --job-name=DOMAINcfg_test
+#SBATCH --output=logs/DOMAINcfg_%j.out
+#SBATCH --error=logs/DOMAINcfg_%j.err
+#SBATCH --time=60:00
+#SBATCH --chdir=/work/n02/n02/gpontes/LP_exp_bc/make_ocean/utils/tools/DOMAINcfg
+#SBATCH --partition=serial
+#SBATCH --qos=serial
+#SBATCH --account=n02-P2F
+#SBATCH --exclusive=mcs
+#SBATCH --ntasks=1
+#SBATCH --mem=100G
+#SBATCH --export=NONE
+
+srun -n 1 ./make_domain_cfg.exe
   ```
+Create a `logs` directory because Slurm writes output there:
 
+   ```text
+   mkdir -p logs
+   ```
 
+Run:
+
+   ```text
+sbatch submit_domaincfg.sh
+   ```
+
+Check:
+
+   ```text
+squeue -u <archer2-usernanema
+   ```
