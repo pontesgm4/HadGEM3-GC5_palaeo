@@ -134,11 +134,22 @@ Create a `logs` directory because Slurm writes output there:
 Run:
 
    ```text
-sbatch submit_domaincfg.sh
+   sbatch submit_domaincfg.sh
    ```
 
 Check:
 
    ```text
-squeue -u <archer2-username
+   squeue -u <archer2-username
    ```
+
+When finished you should get the `domain_cfg.nc` and `mesh_mask.nc` files. Use ncview to co check the `bathy_metry` is as expecteed in the `domain_cfg.nc` file:
+
+   ```text
+   module laod ncview
+   ncview domain_cfg.nc
+   ```
+
+tip: set range from 0-5m to highlight the land-sea mask.
+
+
