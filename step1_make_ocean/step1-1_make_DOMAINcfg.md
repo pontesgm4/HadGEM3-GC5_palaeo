@@ -89,13 +89,20 @@ Then run maketools:
 
 Thisscripts cretes the `DOMAINcfg` directory under `./tools/`.
 
-10. update the `./tools/DOMAINcfg/namelist_cfg` file with the parameters below:
-    
- ```text
-   vim ./tools/DOMAINcfg/namelist_cfg
+10. update the `./tools/DOMAINcfg/namelist_cfg` file with file from Zikun. Also cpy the original ORCA grid file from Zikun:
+
+   ```text
+   cd tools/DOMAINcfg/
+   cp /work/n02/n02/an25872/NEMO_SRC/utils/tools/DOMAINcfg/namelist_cfg .
+   cp cp /work/n02/n02/an25872/NEMO_SRC/utils/tools/DOMAINcfg/eORCA1_coordinates_nc4.nc_from_MR.nc .
   ```
 
+    Update the Bathymetry input file in namelist_cfg with your onw final interpolated bathymetry file from Jasmin (use Globus to transfer the file from Jasmin to this directory). Update the name of the Bathymetry variable in the script if needed.
+    
+11. 
 
+   ```text
 
+  ```
 
 
