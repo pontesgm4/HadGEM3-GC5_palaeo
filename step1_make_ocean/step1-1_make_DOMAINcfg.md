@@ -39,16 +39,61 @@ cd make_ocean
 
 5. On your `[Archer2]` work/ directory create a similar directory as that of `[Jasmin]`:
 
-   ```text
+  ```text
   cd /work/n02/n02/gpontes/LP_exp_bc
   mkdir make_ocean
   cd make_ocean
   ```
 
-6. 
+6. fcm checkout NEMO util scripts from MetOffice (you need a MORS account)
 
+  ```text
+  fcm co https://code.metoffice.gov.uk/svn/nemo/utils utils
+  cd utils
+  ```
 
+7. load the demanded modules:
 
+  ```text
+   module use /work/y07/shared/umshared/moci/modules/modules
+   module load GC5-PrgEnv
+  ```
+
+8. update the archived environment set for ARCHER2:
+
+  ```text
+   cp build/arch/NOC/arch-X86_ARCHER2-Cray.fcm build/arch/NOC/arch-X86_ARCHER2-Cray-updated.fcm
+  ```
+
+make the following changes:
+
+  ```text
+   35c35
+   < %XIOS_HOME           /work/n01/shared/acc/xios-trunk
+   > %XIOS_HOME           /work/n01/shared/nemo/xios-trunk
+  ```
+
+9. We now need to run the script `tools/maketools`, but, in this configuration of NEMO utils the `arch` and `mk` directories were placed into the `build` direcotry without updating the `tools/maketools` script. So place them back into the `utils` directory:
+
+   ```text
+   mv build/arch .
+   mv build/mk .
+  ```
+ 
+Then run maketools:
+
+  ```text
+   cd tools
+   ./maketools -m X86_ARCHER2-Cray-updated -n DOMAINcfg
+  ```
+
+Thisscripts cretes the `DOMAINcfg` directory under `./tools/`.
+
+10. update the `./tools/DOMAINcfg/namelist_cfg` file with the parameters below:
+    
+ ```text
+   vim ./tools/DOMAINcfg/namelist_cfg
+  ```
 
 
 
