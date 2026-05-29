@@ -124,7 +124,7 @@ This writes:
 eddy_viscosity_3D.nc
 ```
 
-![Pliocene bathymetry on the NEMO ORCA1 grid](https://github.com/user/repo/assets/....png)
+![Pliocene bathymetry on the NEMO ORCA1 grid](https://github.com/pontesgm4/HadGEM3-GC5_palaeo/main/step1_make_ocean/step1_make_ocean/eddy_viscosity.png)
 
 ---
 
