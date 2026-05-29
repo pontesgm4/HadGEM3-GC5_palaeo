@@ -28,8 +28,8 @@ This step uses:
 
 ---
 
-### 1. Trasnfer required files from Archer2 to Jasmin
-Note: I suppose step1 can be entirely run on Jasmin, but I haven't tested. 
+### 1. Transfer required files from Archer2 to Jasmin
+Note: I suppose step1_make_domain_cfg can be entirely run on Jasmin, but I haven't tested. 
 
 Copy:
 
@@ -38,20 +38,25 @@ domain_cfg.nc
 mesh_mask.nc
 ```
 
-Copy Charles Williams’ `ahmcoef` generation script and run it.
-
-Notes: I needed to do small modifications in Charles' script because the new variables within the new mesh_mask.nc for GC5 is different from GC3 (i.e., does not include nav_lat)
-my updated script is located on Jasmin at:
+Once you have copied the new files above into your work directory, run `make_ahmcoef.py`, located at:
 
 ```text
-/gws/pw/j25/past2future/users/gpontes/HadGEM3-GC5-0/LP_exp_bc/make_ocean/ahmcoef.py
+cp /gws/pw/j25/past2future/users/gpontes/HadGEM3-GC5-0/LP_exp_bc/make_ocean/make_ahmcoef.py .
 ```
+
 The run:
 
 ```bash
-python ahmcoef.py
+python make_ahmcoef.py
 ```
+
 Note: this script requires the netCDF4 python library, which is not installed in the latest Jasmin jaspy. So need to use your python environment with netCDF4 installed.
+
+This writes:
+
+```text
+ahmcoef.nc
+```
 
 Check:
 
@@ -61,9 +66,9 @@ ncview ahmcoef.nc
 
 ---
 
-### 2. Generating the `eddy_viscosity_3D.nc` file
+## 2. Generating the `eddy_viscosity_3D.nc` file
 
-# Parameter values
+### Parameter values
 
 Following guidance from Dave Storkey (Met Office), use:
 
@@ -93,11 +98,12 @@ The script applies:
 
 ---
 
-# Dave Storkey’s script is located at:
+I have updated Dave Storkey’s script to be consistent with the new set of variables in the domain_cfg.nc and mesh_mask.nc files for GC5:
 
 ```text
 /gws/pw/j25/past2future/users/gpontes/HadGEM3-GC5-0/LP_exp_bc/make_ocean/make_eorca1_eddy_viscosity_3D_file.py
 ```
+
 Already containing the necessary input values and files.
 
 Make executable if preferred:
@@ -105,10 +111,11 @@ Make executable if preferred:
 ```bash
 chmod +x make_eorca1_eddy_viscosity_3D_file.py
 ```
-Then, simply run:
+
+Then, run:
 
 ```bash
-python make_eorca1_eddy_viscosity_3D_file.py
+python make_eorca1_eddy_viscosity_3D_file.py     -m 20000     -t 1000     -d domain_cfg.nc     -k mesh_mask.nc     -c ahmcoef.nc
 ```
 
 This writes:
@@ -119,7 +126,7 @@ eddy_viscosity_3D.nc
 
 ---
 
-### 5. Check output
+### 3. Check output
 
 Inspect:
 
@@ -134,6 +141,7 @@ nav_lon
 nav_lat
 ahmt_3d
 ahmf_3d
+ahm1_3d
 ```
 
 Quick visual check:
@@ -146,16 +154,7 @@ Useful checks:
 
 - surface viscosity lowest near the equator
 - smooth transition poleward
-- values increase with depth
 - coastal values follow the new land–sea mask
+- no strong gradients (both meridionally and zonally)
 
----
-
-### Notes / caveats
-
-- `ahmcoef.nc` depends on the new `mesh_mask.nc`, so regenerate it whenever coastlines or gateways are modified.
-
-- The script was originally written for **eORCA1 / NEMO4** and works directly with GC5.
-
-- For major palaeogeographic changes (e.g. Panama, Indonesian Throughflow, Arctic gateways), inspect the resulting viscosity field carefully around narrow passages and coastlines.
 
