@@ -291,3 +291,5 @@ Check that:
 - land–sea mask is correct
 - key gateways are open/closed as intended
 - no obvious artefacts remain
+
+![Moderns vs Pliocene eddy viscosity](https://github.com/pontesgm4/HadGEM3-GC5_palaeo/blob/main/step1_make_ocean/eddy_viscosity.png)
