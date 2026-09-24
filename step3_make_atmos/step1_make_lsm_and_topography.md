@@ -204,7 +204,6 @@ when `test_plot = True`.
 
 ![spline_fit_gradients](https://github.com/pontesgm4/HadGEM3-GC5_palaeo/blob/main/step3_make_atmos/spline_fit_gradients.png)
 
----
 
 **Notes**
 
