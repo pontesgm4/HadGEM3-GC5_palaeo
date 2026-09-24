@@ -202,7 +202,7 @@ The script also produces the diagnostic plot:
 
 when `test_plot = True`.
 
-![spline_fit_gradients](https://github.com/pontesgm4/HadGEM3-GC5_palaeo/blob/main/step1_make_ocean/spline_fit_gradients.png)
+![spline_fit_gradients](https://github.com/pontesgm4/HadGEM3-GC5_palaeo/blob/main/step3_make_atmos/spline_fit_gradients.png)
 
 Notes
 
