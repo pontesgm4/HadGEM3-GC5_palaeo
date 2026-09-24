@@ -204,7 +204,7 @@ when `test_plot = True`.
 
 ![spline_fit_gradients](https://github.com/pontesgm4/HadGEM3-GC5_palaeo/blob/main/step3_make_atmos/spline_fit_gradients.png)
 
-Notes
+**Notes**
 
 - The scaling is based on the relationship between the original UM orographic fields and surface elevation.
 - The Pliocene land-sea mask is applied to the resulting fields.
