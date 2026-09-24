@@ -210,3 +210,69 @@ when `test_plot = True`.
 - The scaling is based on the relationship between the original UM orographic fields and surface elevation.
 - The Pliocene land-sea mask is applied to the resulting fields.
 - `peak_trough` is generated but is currently not included in the diagnostic plot.
+
+---
+
+### 5. Generate Orography Standard Deviation
+
+**Script:** `step5_remake_orog_std.py`
+
+This script generates an **estimate of orographic standard deviation for the Pliocene topography**. The original approach used an empirical relationship derived from Eocene topographic statistics to estimate sub-grid-scale variability from mean elevation.
+
+The motivation was to provide a consistent estimate of orographic variability where a directly derived Pliocene field was not available. However, because the empirical relationship is based on Eocene rather than modern or Pliocene topography. The resulting field should therefore be considered as an **approximation based on an Eocene-derived empirical relationship**, and its suitability for the Pliocene is uncertain.
+
+**Input files**
+
+| File | Variable(s) | Description |
+|---|---|---|
+| `herold_etal_stddev_subgrid_etopo1_to_eocene_1x1.nc` | `mean_of_stddev`, `mean_of_heights` | Eocene-derived relationship between mean topographic height and sub-grid-scale orography standard deviation |
+| `LP_topog_atmos_antarc.nc` | `ht` | Pliocene atmospheric topography |
+
+**Method**
+
+1. Reads the Eocene topographic statistics:
+   - `mean_of_heights`
+   - `mean_of_stddev`
+
+2. Splits the Eocene data into two regimes at the **30th element**.
+
+3. Performs separate linear regressions between mean topographic height and mean sub-grid-scale standard deviation:
+   - Lower-height regime: `ht_av[:30]` vs `std_av[:30]`
+   - Higher-height regime: `ht_av[30:]` vs `std_av[30:]`
+
+4. Applies the two resulting empirical relationships to the Pliocene topography using **3000 m** as the height threshold.
+
+5. For Pliocene grid cells below 3000 m:
+
+   ```text
+   stddev = slope₁ × height + intercept₁
+   ```
+ 
+ 6. For grid cells at or above 3000 m:
+   ```text
+   stddev = slope₂ × height + intercept₂
+   ```
+ 7. Sets ocean/negative-topography points (ht <= 0) to NaN.
+
+ 8. Writes the resulting field to a new NetCDF file.
+
+**How to run**
+
+Ensure the two input NetCDF files are in the working directory, then run:
+
+```text
+python step5_remake_orog_std.py
+```
+
+**Output**
+
+`LP_orog_std.nc`
+
+**Notes**
+- The 3000 m threshold separates the two empirical linear relationships.
+- The output is intended to provide the orographic standard deviation ancillary corresponding to the Pliocene topography.
+- The script does not calculate sub-grid-scale topographic variability directly from the Pliocene topography.
+- Instead, it transfers an empirical relationship derived from Eocene topographic statistics to the Pliocene.
+- This introduces an important source of uncertainty because the relationship may depend on the underlying topographic distribution and palaeogeography.
+- The Eocene-derived relationship should therefore not be interpreted as a validated Pliocene relationship.
+- A more robust approach would derive the relationship from modern topographic data, validate it against the modern UM ancillary, and then assess how appropriately that relationship can be transferred to the Pliocene.
