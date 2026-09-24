@@ -14,68 +14,93 @@ This step generates:
 
 Run:
 
+```text
 python step1_make_lsm.py
+```
 
 Input:
 
+```text
 atmo_mask_fracarea_anc_ns.nc
+```
 
 The script:
 
-reads the fractional land mask (lsmask);
-replaces missing values with zero;
-applies a land-fraction threshold of:
-0.01
-classifies grid cells as:
-land (1) if land fraction ≥ 0.01;
-ocean (0) otherwise;
-writes the resulting binary land-sea mask.
+- reads the fractional land mask (lsmask);
+- replaces missing values with zero;
+- applies a land-fraction threshold of: 0.01
+- classifies grid cells as:
+  - land (1) if land fraction ≥ 0.01;
+  - ocean (0) otherwise;
+- writes the resulting binary land-sea mask.
 
 Output:
 
+```text
 LP_lsm.nc
+```
 
 The resulting file contains:
 
-variable: lsm
-values: 0 = ocean, 1 = land
+- variable: lsm
+  - values: 0 = ocean, 1 = land
 
-and can be used directly by downstream UM ancillary-generation tools.
+- and can be used directly by downstream UM ancillary-generation tools.
 
-2. Generate the corrected land-fraction ancillary
+**Notes**
+- A threshold of 1% land fraction is used when constructing the binary mask.
+- Missing land-fraction values are converted to ocean (0).
+- The binary mask is derived entirely from the reconstructed Pliocene land fraction field.
+- This step should be rerun whenever the Pliocene land-sea distribution is modified.
 
-The source ancillary required a north-south orientation correction before being used by the UM workflow.
+---
 
-The same script therefore also creates a corrected version of the original land-fraction file.
+### 2. Creating the atmospheric topography
 
-The script:
+The atmospheric UM configuration requires topography on the atmospheric model grid. The Pliocene topography is first expressed as a change relative to the modern topography, then interpolated to the UM atmospheric grid and added to the original UM topography.
 
-copies all dimensions, variables and metadata from the source file;
-applies the north-south latitude correction;
-updates the latitude coordinate;
-preserves the original fractional land values;
-appends provenance information to the file history.
+This approach preserves the original UM topography while applying the reconstructed Pliocene topographic changes.
 
-Output:
+Run:
 
-atmo_mask_fracarea_anc_ns_flipped.nc
+```text
+python step2_interp_topog_atmos.py
+```
 
-This file retains fractional land coverage and is used by subsequent ancillary-generation steps.
+The script reads:
 
-Outputs
+```text
+LP_topo_v1.0.nc
+Modern_std_topo_v1.0.nc
+```
 
-After completion the workflow produces:
+containing the Pliocene and modern topography, respectively.
 
-LP_lsm.nc
-atmo_mask_fracarea_anc_ns_flipped.nc
+The Pliocene topographic anomaly is calculated as:
 
-where:
+`Pliocene anomaly = Pliocene topography − modern topography`
 
-File	Purpose
-LP_lsm.nc	Binary land-sea mask used by UM ancillary tools
-atmo_mask_fracarea_anc_ns_flipped.nc	Corrected fractional land-mask ancillary consistent with Pliocene geography
-Notes
-A threshold of 1% land fraction is used when constructing the binary mask.
-Missing land-fraction values are converted to ocean (0).
-The binary mask is derived entirely from the reconstructed Pliocene land fraction field.
-This step should be rerun whenever the Pliocene land-sea distribution is modified.
+This anomaly is then used for the atmospheric interpolation.
+
+**Output**
+
+The resulting atmospheric topography is written to:
+
+```text
+LP_topog_atmos.nc
+```
+
+The file contains:
+
+`variable: ht`
+
+and is used as the Pliocene atmospheric topography for subsequent UM ancillary generation.
+
+**Notes**
+- The Pliocene topographic anomaly is calculated relative to the modern topography before interpolation.
+- Conservative-normalised regridding is used to transfer the anomaly to the UM atmospheric grid.
+- The Pliocene LSM generated in Step 1 is used to remove topographic anomalies over ocean cells.
+- A 3 × 3 atmospheric-grid-cell smoothing is applied after interpolation.
+- The original UM topography is used as the baseline, with the Pliocene anomaly added to it.
+- Negative resulting elevations are set to zero.
+- This step should be rerun whenever the Pliocene topography or land-sea mask is modified.
