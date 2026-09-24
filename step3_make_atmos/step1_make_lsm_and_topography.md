@@ -200,7 +200,7 @@ The script also produces the diagnostic plot:
 
 `spline_fit_gradients.pdf`
 
-when test_plot = True.
+when `test_plot = True`.
 
 Notes
 
