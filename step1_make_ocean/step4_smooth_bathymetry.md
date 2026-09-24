@@ -49,7 +49,7 @@ This script quantifies the bathymetric modifications and produces diagnostics sh
 
 The goal is to confirm that smoothing only alters the problematic regions while retaining the intended Pliocene paleogeography.
 
-figure
+![Smoothed bathymetry: Original minus smoothed](https://github.com/pontesgm4/HadGEM3-GC5_palaeo/blob/main/step1_make_ocean/smooth_bathy.png)
 
 **Note: Rebuild the NEMO mesh (`domain_cfg.nc`)**
 
