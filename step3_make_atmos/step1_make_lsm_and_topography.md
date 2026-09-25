@@ -1,5 +1,7 @@
 ## Creating the atmospheric land-sea mask and topographic fields
 
+*Most scripts in this repository were adapted from [David Hutchinson's framework](https://github.com/dkhutch/access_esm_miocene) to implement Miocene boundary conditions in ACCESS-ESM1.5, which also uses MEtOffice UM as atmospheric component, just earlier version. Howerver, some scripts needed to be entirely rewritten to meet UM13 and Archer2 requirements.*
+
 The Pliocene paleogeography modifies the distribution of land and ocean relative to the present day. The Unified Model therefore requires an updated land-sea mask consistent with the reconstructed Pliocene geography.
 
 The coupled setup provides a land-fraction ancillary (lsmask) containing fractional land coverage for each atmospheric grid cell. Several UM components, including river-routing and land-surface processes, additionally require a binary land-sea mask.
@@ -12,17 +14,9 @@ This step generates:
 
 ### 1. Generate the binary land-sea mask
 
-Run:
+Script: `step1_make_lsm.py`
 
-```text
-python step1_make_lsm.py
-```
-
-Input:
-
-```text
-atmo_mask_fracarea_anc_ns.nc
-```
+Input: `atmo_mask_fracarea_anc_ns.nc`
 
 The script:
 
@@ -34,18 +28,7 @@ The script:
   - ocean (0) otherwise;
 - writes the resulting binary land-sea mask.
 
-Output:
-
-```text
-LP_lsm.nc
-```
-
-The resulting file contains:
-
-- variable: lsm
-  - values: 0 = ocean, 1 = land
-
-- and can be used directly by downstream UM ancillary-generation tools.
+Output: `LP_lsm.nc` binary (0 = ocean, 1 = land) land-sea mask
 
 **Notes**
 - A threshold of 1% land fraction is used when constructing the binary mask.
