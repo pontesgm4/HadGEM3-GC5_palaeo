@@ -7,11 +7,17 @@ Script: `step6_interp_input_dumps_noVeg_mule.py`
 **Inputs**
 
 `lsm_pi_file` -> `do332a.da22791201_00.nc` (Here I take this from a PI restart dump)
+
 `lsm_file` -> `LP_lsm.nc` (generated in step1)
+
 `orog_file` -> `LP_topog_atmos_antarc.nc` (final orog file after smoothing Antarctica generated in step1)
+
 `stddev_file` -> `LP_orog_std.nc` (generated in step1)
+
 `gradient_file` -> `LP_xx_yy_scaled.nc` (generated in step1)
+
 `netcdf_landfrac` -> `../make_coupler/atmo_mask_fracarea_anc_ns.nc` (generated in step2_make_coupler)
+
 `mask_file` -> `../make_coupler/um_masks.nc` (generated in step2_make_coupler)
 
 `step6` is an arg parser script and must be run as following:
