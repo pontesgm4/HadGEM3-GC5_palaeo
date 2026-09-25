@@ -22,7 +22,7 @@ Script: `step6_interp_input_dumps_noVeg_mule.py`
 
 **How to run**
 
-`step6` is an arg parser script and must be run as following:
+`step6` is an arg parser script and must be run as follows:
 
 ```text
 python step6_interp_input_dumps_noVeg_mule.py qparm.ash -o qrparm.ash.LP
