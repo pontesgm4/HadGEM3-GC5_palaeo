@@ -1,64 +1,131 @@
 ## Building vegetation and soil input dumps
 
-PRISM4 provides a vegetation reconstruction grouped in 8 major biomes. The UM13.8/JULES vegetation field, on the other hand, 
-is based on plant functional types(PFTs), consisting of 9 types of leaf, grasses and ground that are combined to build up a biome. 
-Each grid cell includes the proportion of each PFTs present (or absent) in that grid cell. For this reason, we reconstruct each biome in the model as a mix of PFTs (Table 1). For example, in the Late Pliocene simulation, each grid cell of PMISM4 boreal forests is represented in the
-UKCM2 as 70% of needleleaf, 20% C3 grass, 2.5 shrubs and 7.5% bareground (see full conversion below). 
-This table is mostly similar to the one provided by [Charles Williams in his Idiot's Guide](https://github.com/PalaeoClimateModellingUK/PalaeoClimateModellingUK.github.io/blob/main/resources.md);
-however with some minor changes to make sure the dominant PFTs of each biome are consistent with the PI distribution.
+PRISM4 provides a vegetation reconstruction in terms of **broad biome classes** (e.g., boreal forest, tundra, savanna). 
+In contrast, the UM13.8/JULES land-surface scheme represents vegetation using **Plant Functional Types (PFTs)**. 
+Each land grid cell contains fractional coverage of several PFTs, and 
+these fractions collectively define the vegetation characteristics of that grid cell.
 
+Consequently, the PRISM4 biome reconstruction cannot be used directly by the model. 
+Instead, each PRISM4 biome must first be translated into an equivalent mixture of JULES PFTs. 
+Table 1 shows the conversion adopted in this workflow.
+
+The conversion is largely based on the mapping proposed by Charles Williams in the [Idiot's Guide](https://github.com/PalaeoClimateModellingUK/PalaeoClimateModellingUK.github.io/blob/main/resources.md), 
+with minor modifications to ensure that the dominant PFTs assigned to each biome remain consistent with the pre-industrial (PI) 
+vegetation distribution used by UKCM2.
+
+**Table 1. Conversion from PRISM4 biomes to JULES PFT fractions**
 
 | Pliocene (PRISM4) | JULES |
 |---|---|
 | Land ice | ice |
 | Dry Tundra or Tundra | 40% shrubs + 60% bareground |
 | Boreal Forest | 70% needleleaf + 20% C3 grass + 2.5% shrubs + 7.5% bareground |
-| Temperate forest | 75% needleleaf + 10% C3 grass + 10% shrubs + 5% bareground |
+| Temperate Forest | 75% needleleaf + 10% C3 grass + 10% shrubs + 5% bareground |
 | Desert | 100% bareground |
 | Grassland | 5% broadleaf + 55% C3 grass + 30% shrubs + 10% bareground |
 | Savanna | 18% broadleaf + 5% C4 grass + 67% shrubs + 10% bareground |
-| Warm-temperate forest | 75% broadleaf + 10% C3 grass + 5% C4 grass + 10% shrubs |
-| Tropical forest | 100% broadleaf |
+| Warm-temperate Forest | 75% broadleaf + 10% C3 grass + 5% C4 grass + 10% shrubs |
+| Tropical Forest | 100% broadleaf |
 | Lake | 100% lake |
 
-### 1. Creating Pliocene vegetation file
+### 1. Creating the Pliocene vegetation file
 
-Use whatever tools/language is are more comfortable with to generate your vegetation file. I do not provide a code for as I recommend you do it interactively to visually inspect changes in all biomes/PFTs distributions as you build them up.
+The first step is to construct a Pliocene PFT distribution on the UM grid.
 
-For me it basically consisted of:
+No dedicated script is provided for this stage. Instead, I recommend building the vegetation field interactively using whichever tools or programming language you are most comfortable with. This allows visual inspection of the resulting biome and PFT distributions at each stage of the workflow.
 
-- Interpolating the PRISM biome reconstruction onto the UM grid (similarly to the way it is done in `step6_interp_input_dumps_noVeg_mule.py` script in the step before this)
-- Applying the conversion table to the interpolated `qrparm.veg.frac.LP`
-  - This basically identify grid cells belonging to each specific PRISM mega biome and replacing them with PFTs as indicated in the conversion table
-- Save a Pliocene PFT distribution in netCDF and in the same structure as the original UM dump.
- 
-This gives the following result:
+The procedure consists of:
 
-[figure to be added]
+1. Interpolating the PRISM4 biome reconstruction onto the UM grid (following a similar approach to that used in `step6_interp_input_dumps_noVeg_mule.py`).
+2. Applying the biome-to-PFT conversion shown in Table 1.
+   - For each grid cell, identify the PRISM4 biome class.
+   - Replace that biome class with the corresponding mixture of JULES PFT fractions.
+3. Saving the resulting PFT fractions in a NetCDF file using the same structure and dimensions as the original UM vegetation ancillary (`qrparm.veg.frac`).
 
-### 2. Creating PI-to-LP index matrix
-
-Nonetheless, this is not your final vegetation field to be added to the input dump. 
-To ensure consistent with the PI setup, the nearest grid cell in the PI setup with similar
-characteristics to the generated 'Pliocene PFTs distribution' is adopted in the Late Pliocene setup.
-
-For this, the script
-
-`step7_reform_veg.py`
-
-generates an index matrix (`remapping_idx_veg.nc`) with the corresponding PI grid cell for each Pliocene grid cell.
+The resulting file represents a first-order Pliocene vegetation reconstruction expressed in terms of JULES PFTs.
 
 > [!TIP]
-> It is recommended to check isave and jsave to inspect that they're xonally and meridionally consistently, respectively. So that, confirming that the nearest grid cell is indeed being used.
-> [figure to be added]
+> Visually inspect each generated PFT layer before proceeding. Errors introduced during interpolation or biome conversion are often easier to identify at this stage than after the vegetation has been incorporated into the UM ancillaries.
 
-### 3. Building soil and input dumps
+*Figure to be added.*
 
-After obtaining the `remapping_idx_veg.nc` file, you're ready to generate the new input dumps for vegetation and soil fields.
-Here I modify soil fields in the same way as vegetation as most soil properties are linked to a certain vegetation type. This procedure therefore modifies all vegetation (i.e., canopy heigh and leaf area index) and soil (i.e., dust) properties while ensuring consistency the PI setup.
+---
 
-To do this, apply the `step8a_build_input_dumps_from_veg_index.py` to the following input dumps:
+### 2. Creating the PI-to-LP remapping index
 
+The PFT distribution generated in the previous step is **not yet the final vegetation field used by the model**.
 
+Rather than directly adopting the newly generated PFT fractions, the workflow proposed here identifies the most 
+similar grid cell in the pre-industrial (PI) setup and transfers the associated vegetation and soil properties from that location. 
+This preserves internal consistency among vegetation-related parameters that are difficult to reconstruct independently.
 
+The script
 
+```text
+step7_reform_veg.py
+```
+
+creates a remapping matrix:
+
+```text
+remapping_idx_veg.nc
+```
+
+which stores, for every Pliocene grid cell, the indices of the corresponding PI grid cell selected as the best match.
+
+> [!TIP]
+> Inspect the `isave` and `jsave` fields produced by the script. These fields contain the zonal and meridional source indices used in the remapping and provide a useful diagnostic to verify that neighbouring grid cells are generally mapped to nearby locations rather than to physically unrealistic source regions.
+
+*Figure to be added.*
+
+---
+
+### 3. Building vegetation and soil ancillaries
+
+Once the remapping matrix (`remapping_idx_veg.nc`) has been generated, it can be used to construct the final vegetation and soil ancillaries.
+
+The philosophy behind this step is that many soil properties are closely linked to vegetation type. Therefore, vegetation and soil fields are remapped together using the same PI-to-LP correspondence. This approach preserves physically consistent combinations of vegetation and soil characteristics inherited from the PI configuration.
+
+The script
+
+```text
+step8a_build_input_dumps_from_veg_index.py
+```
+
+should be applied to each of the vegetation- and soil-related ancillaries listed below:
+
+```bash
+python step8a_build_input_dumps_from_veg_index.py qparm.hyddtop \
+    -o qrparm.hyddtop.LP
+
+python step8a_build_input_dumps_from_veg_index.py qparm.soil.dust \
+    -o qrparm.soil.dust.LP
+
+python step8a_build_input_dumps_from_veg_index.py qparm.soil \
+    -o qrparm.soil.LP
+
+python step8a_build_input_dumps_from_veg_index.py qparm.soil_roughness \
+    -o qrparm.soil_roughness.LP
+
+python step8a_build_input_dumps_from_veg_index.py qparm.veg.frac \
+    -o qrparm.veg.frac.LP
+
+python step8a_build_input_dumps_from_veg_index.py qparm.veg.func \
+    -o qrparm.veg.func.LP
+```
+
+This procedure generates Pliocene versions of the original PI ancillaries while maintaining consistency among vegetation fractions, vegetation functional parameters, soil properties, dust parameters and other land-surface characteristics.
+
+---
+
+### 4. Checking PFT consistency
+
+As a final quality-control step, verify that the PFT fractions sum to unity in every grid cell.
+
+Run:
+
+```bash
+python step8b_PFT_check_ancil.py
+```
+
+The script checks that the sum of all PFT fractions equals 1.0 (within numerical precision) for every land grid cell.
