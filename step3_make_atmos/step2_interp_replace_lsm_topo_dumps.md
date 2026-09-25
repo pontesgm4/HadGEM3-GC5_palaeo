@@ -4,6 +4,8 @@ This step will replace all generated orography fields into their respective inpu
 
 Script: `step6_interp_input_dumps_noVeg_mule.py`
 
+Fields to be **replaced** with newly generated ones:
+
 **Inputs**
 
 `lsm_pi_file` -> `do332a.da22791201_00.nc` (Here I take this from a PI restart dump)
@@ -19,6 +21,24 @@ Script: `step6_interp_input_dumps_noVeg_mule.py`
 `netcdf_landfrac` -> `../make_coupler/atmo_mask_fracarea_anc_ns.nc` (generated in step2_make_coupler)
 
 `mask_file` -> `../make_coupler/um_masks.nc` (generated in step2_make_coupler)
+
+
+Fields to be **interpolated**:
+
+In `qrparm.wavedrag`:
+
+  ```text
+  unspecified
+  unspecified_1
+  unspecified_2
+  ```
+
+In `qrparm.orog_radiation_parameters`:
+
+  ```text
+  unspecified
+  unspecified_1
+  ```
 
 **How to run**
 
