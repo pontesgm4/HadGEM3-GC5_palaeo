@@ -47,7 +47,9 @@ The resulting file represents a first-order Pliocene vegetation reconstruction e
 > [!TIP]
 > Visually inspect each generated PFT layer before proceeding. Errors introduced during interpolation or biome conversion are often easier to identify at this stage than after the vegetation has been incorporated into the UM ancillaries.
 
-*Figure to be added.*
+![prism4](https://github.com/pontesgm4/HadGEM3-GC5_palaeo/blob/main/step3_make_atmos/prism4.png)
+![LP](https://github.com/pontesgm4/HadGEM3-GC5_palaeo/blob/main/step3_make_atmos/LP_veg.png)
+![PI](https://github.com/pontesgm4/HadGEM3-GC5_palaeo/blob/main/step3_make_atmos/PI_veg.png)
 
 ---
 
