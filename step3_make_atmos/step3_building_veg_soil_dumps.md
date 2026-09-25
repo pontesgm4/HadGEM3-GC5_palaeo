@@ -76,7 +76,7 @@ which stores, for every Pliocene grid cell, the indices of the corresponding PI 
 > [!TIP]
 > Inspect the `isave` and `jsave` fields produced by the script. These fields contain the zonal and meridional source indices used in the remapping and provide a useful diagnostic to verify that neighbouring grid cells are generally mapped to nearby locations rather than to physically unrealistic source regions.
 
-*Figure to be added.*
+![isave_jsave](https://github.com/pontesgm4/HadGEM3-GC5_palaeo/blob/main/step3_make_atmos/isave_jsave.png)
 
 ---
 
