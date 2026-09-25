@@ -32,3 +32,9 @@ python step6_interp_input_dumps_noVeg_mule.py qparm.orog_mean -o qrparm.ororg_me
 python step6_interp_input_dumps_noVeg_mule.py qparm.orog_radiation_parameters -o qrparm.orog_radiation_parameters.LP
 python step6_interp_input_dumps_noVeg_mule.py qparm.orog_wavedrag -o qrparm.ororg_wavedrag.LP
 ```
+
+[!TIP]
+**Tip:** I re commend you to also apply this script to the vegetation fraction file as the next step is to generate input dumps for vegetation related fields:
+```text
+python step6_interp_input_dumps_noVeg_mule.py qparm.veg.frac -o qrparm.veg.frac.LP
+```
