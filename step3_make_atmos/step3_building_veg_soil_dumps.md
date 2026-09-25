@@ -4,7 +4,7 @@ PRISM4 provides a vegetation reconstruction grouped in 8 major biomes. The UM13.
 the Late Pliocene simulation, each grid cell of PMISM4 boreal forests is represented in the
 UKCM2 as 70% of needleleaf, 20% C3 grass, 2.5 shrubs and 7.5% bareground (see full conversion below). 
 This table was mostly similar to the one provided by [Charles Williams in Idiot's Guide](https://github.com/PalaeoClimateModellingUK/PalaeoClimateModellingUK.github.io/blob/main/resources.md);
-however with a some minor changes to make sure the dominant PFTs of each biome are consistent with the PI distribution.
+however with some minor changes to make sure the dominant PFTs of each biome are consistent with the PI distribution.
 
 
 | Pliocene (PRISM4) | JULES |
